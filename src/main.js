@@ -287,4 +287,4 @@ for (let i = 0; i < EXTRA_COUNT; i++) {
   render(filmListMostCommentedContainer, createFilmCardTemplate(), `beforeend`);
 }
 
-render(siteFooterElement, createPopUpTemplate(), `beforeend`);
+render(siteFooterElement, createPopUpTemplate(), `afterend`);
