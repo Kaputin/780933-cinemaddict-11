@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray} from "./utils.js";
+import {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray, getDateWithZero} from "./utils.js";
 import {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT} from "./const.js";
 
 const DESCRIPTION_COUNT = 5;
@@ -14,14 +14,30 @@ if (minutesDuration < 10) {
   minutesDuration = `0` + minutesDuration;
 }
 
+let date = new Date(
+    getRandomIntegerNumber(YEAR_START, YEAR_FINISH),
+    getRandomIntegerNumber(0, MONTH_COUNT + 1),
+    getRandomIntegerNumber(1, DAYS_COUNT + 1)
+);
+
+let year = date.getFullYear();
+let days = date.getDate();
+let month = date.getMonth();
+
+days = getDateWithZero(days);
+
+let dates = {
+  DAYS: days,
+  MONTHS: month,
+  YEARS: year
+};
 
 const generateFilmCard = () => {
   return {
     title: getRandomArrayItem(TITLES),
     rating: getRandomNumberTwoDecimalPlaces(0, 10),
-    date: new Date(getRandomIntegerNumber(YEAR_START, YEAR_FINISH), getRandomIntegerNumber(1, MONTH_COUNT), getRandomIntegerNumber(1, DAYS_COUNT + 1)),
+    date: dates,
     duration: hoursDuration + `h ` + minutesDuration + `m`,
-    // genre: getRandomArray(GENRES, DESCRIPTION_COUNT).join(` `),
     genre: getRandomArray(GENRES, DESCRIPTION_COUNT),
     poster: getRandomArrayItem(POSTERS),
     description: getRandomArray(DESCRIPTIONS, DESCRIPTION_COUNT).join(` `),

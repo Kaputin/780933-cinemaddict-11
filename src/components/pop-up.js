@@ -3,26 +3,6 @@ import {MONTH_NAMES} from "../mock/const.js";
 const createCommentMarkup = (comment) => {
   const {emoji, text, author, date} = comment;
 
-  let days = date.getDate();
-  if (days < 10) {
-    days = `0` + days;
-  }
-
-  let month = date.getMonth();
-  if (month < 10) {
-    month = `0` + month;
-  }
-
-  let hours = date.getHours();
-  if (hours < 10) {
-    hours = `0` + hours;
-  }
-
-  let minutes = date.getMonth();
-  if (minutes < 10) {
-    minutes = `0` + minutes;
-  }
-
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -32,11 +12,17 @@ const createCommentMarkup = (comment) => {
         <p class="film-details__comment-text">${text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
-          <span class="film-details__comment-day">${date.getFullYear()}/${month}/${days} ${hours}:${minutes}</span>
+          <span class="film-details__comment-day">${date.YEARS}/${date.MONTHS}/${date.DAYS} ${date.HOURS}:${date.MINUTES}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>`
+  );
+};
+
+const createGenreMarkup = (genre) => {
+  return (
+    `<span class="film-details__genre">${genre}</span>`
   );
 };
 
@@ -48,11 +34,7 @@ export const createPopUpTemplate = (filmCard, comments) => {
   const favoriteClass = isFavorite ? `checked` : ``;
 
   const commentsMarkup = comments.map((it) => createCommentMarkup(it)).join(`\n`);
-
-  let days = date.getDate();
-  if (days < 10) {
-    days = `0` + days;
-  }
+  const genresMarkup = genre.map((it) => createGenreMarkup(it)).join(`\n`);
 
   let genres = ``;
 
@@ -103,7 +85,7 @@ export const createPopUpTemplate = (filmCard, comments) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${days} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}</td>
+                  <td class="film-details__cell">${date.DAYS} ${MONTH_NAMES[date.MONTHS]} ${date.YEARS}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -116,7 +98,7 @@ export const createPopUpTemplate = (filmCard, comments) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">${genres}</td>
                   <td class="film-details__cell">
-                    <span class="film-details__genre">${genre.join(` `)}</span>
+                    ${genresMarkup}
                   </td>
                 </tr>
               </table>

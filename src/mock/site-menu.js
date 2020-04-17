@@ -1,5 +1,9 @@
-import {uniteArr} from "./utils.js";
-import {MENU_ITEMS} from "./const.js";
+const MenuItems = {
+  ALL: `All`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`
+};
 
 const generateMenuItems = (filmCards) => {
 
@@ -7,7 +11,6 @@ const generateMenuItems = (filmCards) => {
   let history = 0;
   let favorite = 0;
   const all = filmCards.length;
-  const countFilmCards = [];
 
   for (let i of filmCards) {
     if (i.isFavorite === true) {
@@ -19,12 +22,19 @@ const generateMenuItems = (filmCards) => {
     }
   }
 
-  countFilmCards.push(all, watchlist, history, favorite);
-
-  let newArr = [];
-
-  uniteArr(MENU_ITEMS, countFilmCards, newArr);
-  return newArr;
+  return [{
+    name: MenuItems.ALL,
+    count: all,
+  }, {
+    name: MenuItems.WATCHLIST,
+    count: watchlist,
+  }, {
+    name: MenuItems.HISTORY,
+    count: history,
+  }, {
+    name: MenuItems.FAVORITES,
+    count: favorite,
+  }];
 };
 
 export {generateMenuItems};
