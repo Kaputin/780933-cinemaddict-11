@@ -26,4 +26,18 @@ const getRandomArray = (arr, max) => { // создаем функцию для �
   return newRandomArr; // возвращаем перетасованный массив
 };
 
-export {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray};
+const getItem = (name, count) => {
+  return {
+    name,
+    count,
+  };
+};
+
+const uniteArr = (arrName, arrCount, newArr) => {
+  for (let i = 0; i < arrName.length; i++) {
+    let item = getItem(arrName[i], arrCount[i]);
+    newArr.push(item);
+  }
+};
+
+export {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray, getItem, uniteArr};

@@ -1,6 +1,3 @@
-// нужно дабавить в фильмах жанры, т.к. от количества зависит как будет выводиться поле genre или genres
-// поправить дату производства фильма, продолжительность и дату комментария
-
 const FILM_COUNT = 16;
 const EXTRA_COUNT = 2;
 
@@ -63,10 +60,10 @@ showMoreButton.addEventListener(`click`, () => {
 const filmListTopRated = siteMainElement.querySelectorAll(`.films-list--extra`)[0];
 const filmListTopRatedContainer = filmListTopRated.querySelector(`.films-list__container`);
 
-const ratingfilmCards = sortRating(filmCards.slice());
+const ratingFilmCards = sortRating(filmCards.slice());
 
-ratingfilmCards.slice(0, EXTRA_COUNT)
-  .forEach((ratingfilmCard) => render(filmListTopRatedContainer, createFilmCardTemplate(ratingfilmCard), `beforeend`));
+ratingFilmCards.slice(0, EXTRA_COUNT)
+  .forEach((ratingFilmCard) => render(filmListTopRatedContainer, createFilmCardTemplate(ratingFilmCard), `beforeend`));
 
 const filmListMostCommented = siteMainElement.querySelectorAll(`.films-list--extra`)[1];
 const filmListMostCommentedContainer = filmListMostCommented.querySelector(`.films-list__container`);

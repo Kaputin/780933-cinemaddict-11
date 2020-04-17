@@ -1,5 +1,5 @@
 export const createFilmCardTemplate = (filmCard) => {
-  const {title, rating, year, duration, genre, poster, description, commentsCount, isWatchlist, isWatched, isFavorite} = filmCard;
+  const {title, rating, date, duration, genre, poster, description, commentsCount, isWatchlist, isWatched, isFavorite} = filmCard;
 
   const watchListClass = isWatchlist ? `film-card__controls-item--active` : ``;
   const watchedClass = isWatched ? `film-card__controls-item--active` : ``;
@@ -10,9 +10,9 @@ export const createFilmCardTemplate = (filmCard) => {
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${year}</span>
+        <span class="film-card__year">${date.getFullYear()}</span>
         <span class="film-card__duration">${duration}</span>
-        <span class="film-card__genre">${genre}</span>
+        <span class="film-card__genre">${genre.join(` `)}</span>
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>

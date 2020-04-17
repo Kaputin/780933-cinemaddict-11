@@ -1,3 +1,10 @@
+const MENU_ITEMS = [
+  `All`,
+  `Watchlist`,
+  `History`,
+  `Favorites`
+];
+
 const TITLES = [
   `Made for each other`,
   `Popeye meets sinbad`,
@@ -104,4 +111,24 @@ const AUTHOR = [
   `Shaquille ONeal`
 ];
 
-export {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, EMOJI, TEXT, AUTHOR};
+const MONTH_NAMES = [
+  `January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`,
+];
+
+const YEAR_START = 1888;
+const YEAR_FINISH = 2020;
+const MONTH_COUNT = 12;
+const DAYS_COUNT = 31;
+
+export {MENU_ITEMS, TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, EMOJI, TEXT, AUTHOR, MONTH_NAMES, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT};

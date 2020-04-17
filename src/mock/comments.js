@@ -1,5 +1,5 @@
-import {getRandomArrayItem} from "./utils.js";
-import {EMOJI, TEXT, AUTHOR} from "./const.js";
+import {getRandomArrayItem, getRandomIntegerNumber} from "./utils.js";
+import {EMOJI, TEXT, AUTHOR, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT} from "./const.js";
 
 
 const generateComment = () => {
@@ -7,7 +7,7 @@ const generateComment = () => {
     emoji: getRandomArrayItem(EMOJI),
     text: getRandomArrayItem(TEXT),
     author: getRandomArrayItem(AUTHOR),
-    date: `2019/12/31 23:59`,
+    date: new Date(getRandomIntegerNumber(YEAR_START, YEAR_FINISH), getRandomIntegerNumber(1, MONTH_COUNT + 1), getRandomIntegerNumber(1, DAYS_COUNT + 1), getRandomIntegerNumber(0, 25), getRandomIntegerNumber(0, 60)),
   };
 };
 
