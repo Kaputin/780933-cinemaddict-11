@@ -1,4 +1,5 @@
 import {MONTH_NAMES} from "../mock/const.js";
+import {createElement} from "../utils.js";
 
 const createCommentMarkup = (comment) => {
   const {emoji, text, author, date} = comment;
@@ -26,7 +27,7 @@ const createGenreMarkup = (genre) => {
   );
 };
 
-export const createPopUpTemplate = (filmCard, comments) => {
+const createPopUpTemplate = (filmCard, comments) => {
   const {title, rating, genre, date, duration, poster, description, commentsCount, isWatchlist, isWatched, isFavorite, writers, actors, country, ageLimit, director} = filmCard;
 
   const watchListClass = isWatchlist ? `checked` : ``;
@@ -163,3 +164,28 @@ export const createPopUpTemplate = (filmCard, comments) => {
     </section>`
   );
 };
+
+export default class PopUp {
+  constructor(filmCard, comments) {
+    this._filmCard = filmCard;
+    this._comments = comments;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopUpTemplate(this._filmCard, this._comments);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
