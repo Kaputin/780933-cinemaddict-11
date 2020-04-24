@@ -1,5 +1,5 @@
 import {MONTH_NAMES} from "../mock/const.js";
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createCommentMarkup = (comment) => {
   const {emoji, text, author, date} = comment;
@@ -165,27 +165,26 @@ const createPopUpTemplate = (filmCard, comments) => {
   );
 };
 
-export default class PopUp {
+export default class PopUp extends AbstractComponent {
   constructor(filmCard, comments) {
+    super();
+
     this._filmCard = filmCard;
     this._comments = comments;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createPopUpTemplate(this._filmCard, this._comments);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  removeCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .removeEventListener(`click`, handler);
   }
+
 }
