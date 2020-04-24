@@ -61,7 +61,7 @@ const renderFilmCard = (filmListContainer, filmCard) => {
 };
 
 
-export default class ContentController {
+export default class PageController {
   constructor(container) {
     this._container = container;
     this._showMoreButton = new ShowMoreButton();
