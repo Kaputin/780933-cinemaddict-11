@@ -23,6 +23,6 @@ render(siteHeaderElement, new RatingProfile(), RenderPosition.BEFOREEND);
 render(siteMainElement, new SiteMenu(menuItems), RenderPosition.BEFOREEND);
 const content = new Content();
 render(siteMainElement, content, RenderPosition.BEFOREEND);
-const contentController = new PageController(content, filmCards);
-contentController.render(filmCards);
+const contentController = new PageController(content);
+contentController.render(siteFooterElement, filmCards);
 render(siteFooterStatistics, new FooterStatistics(FILM_COUNT), RenderPosition.BEFOREEND);

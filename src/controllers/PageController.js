@@ -12,10 +12,10 @@ import {generateComments} from "../mock/comments.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {sortDiscussed, sortRating} from "../utils/sort.js";
 
-const renderFilmCard = (filmListContainer, filmCard) => {
+const renderFilmCard = (filmListContainer, footerContainer, filmCard) => {
 
   const addPopUp = () => {
-    filmListContainer.appendChild(popUp.getElement());
+    footerContainer.appendChild(popUp.getElement());
     document.addEventListener(`keydown`, onEscKeyDown);
     popUp.setCloseButtonClickHandler(onClosePopupClick);
     filmCardElement.removeCardTitleClickHandler(onOpenPopupClick);
@@ -35,7 +35,7 @@ const renderFilmCard = (filmListContainer, filmCard) => {
   };
 
   const removePopUp = () => {
-    filmListContainer.removeChild(popUp.getElement());
+    footerContainer.removeChild(popUp.getElement());
     filmCardElement.setCardTitleClickHandler(onOpenPopupClick);
     filmCardElement.setCardPosterClickHandler(onOpenPopupClick);
     filmCardElement.setCardCommentsClickHandler(onOpenPopupClick);
@@ -69,7 +69,7 @@ export default class PageController {
     this._mostCommented = new MostCommented();
   }
 
-  render(filmCards) {
+  render(footer, filmCards) {
     const content = this._container.getElement();
     const filmList = content.querySelector(`.films-list`);
     const filmListContainer = content.querySelector(`.films-list__container`);
@@ -78,7 +78,7 @@ export default class PageController {
 
     filmCards.slice(0, showingFilmsCount)
     .forEach((filmCard) => {
-      renderFilmCard(filmListContainer, filmCard);
+      renderFilmCard(filmListContainer, footer, filmCard);
     });
 
 
@@ -89,7 +89,7 @@ export default class PageController {
       showingFilmsCount = showingFilmsCount + SHOWING_FILMS_COUNT_BY_BUTTON;
 
       filmCards.slice(prevFilmsCount, showingFilmsCount)
-        .forEach((filmCard) => renderFilmCard(filmListContainer, filmCard));
+        .forEach((filmCard) => renderFilmCard(filmListContainer, footer, filmCard));
 
       if (showingFilmsCount >= filmCards.length) {
         remove(this._showMoreButton);
@@ -107,7 +107,7 @@ export default class PageController {
 
     ratingFilmCards.slice(0, EXTRA_COUNT)
       .forEach((ratingFilmCard) => {
-        renderFilmCard(filmListTopRatedContainer, ratingFilmCard);
+        renderFilmCard(filmListTopRatedContainer, footer, ratingFilmCard);
       });
 
     const filmListMostCommented = this._mostCommented.getElement();
@@ -116,7 +116,7 @@ export default class PageController {
 
     extrafilmCards.slice(0, EXTRA_COUNT)
       .forEach((extrafilmCard) => {
-        renderFilmCard(filmListMostCommentedContainer, extrafilmCard);
+        renderFilmCard(filmListMostCommentedContainer, footer, extrafilmCard);
       });
   }
 }
