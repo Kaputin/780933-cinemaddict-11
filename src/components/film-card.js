@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createFilmCardTemplate = (filmCard) => {
   const {title, rating, date, duration, genre, poster, description, commentsCount, isWatchlist, isWatched, isFavorite} = filmCard;
@@ -28,26 +28,44 @@ const createFilmCardTemplate = (filmCard) => {
   );
 };
 
-export default class FilmCard {
+export default class FilmCard extends AbstractComponent {
   constructor(filmCard) {
-    this._filmCard = filmCard;
+    super();
 
-    this._element = null;
+    this._filmCard = filmCard;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._filmCard);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setCardTitleClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__title`)
+      .addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  removeCardTitleClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__title`)
+      .removeEventListener(`click`, handler);
+  }
+
+  setCardPosterClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__poster`)
+      .addEventListener(`click`, handler);
+  }
+
+  removeCardPosterClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__poster`)
+      .removeEventListener(`click`, handler);
+  }
+
+  setCardCommentsClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__comments`)
+      .addEventListener(`click`, handler);
+  }
+
+  removeCardCommentsClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__comments`)
+      .removeEventListener(`click`, handler);
   }
 }
