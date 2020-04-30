@@ -1,4 +1,4 @@
-const FILM_COUNT = 16;
+const FILM_COUNT = 6;
 
 import RatingProfile from "./components/rating.js";
 import SiteMenu from "./components/site-menu.js";
