@@ -6,38 +6,49 @@ const COMMENTS_COUNT = 5;
 const HOURS_MAX = 3;
 const MINUTES_MAX = 59;
 
+const getHours = (hoursMax) => {
+  let hoursDuration = getRandomIntegerNumber(0, hoursMax + 1);
 
-let hoursDuration = getRandomIntegerNumber(0, HOURS_MAX + 1);
+  return hoursDuration;
+};
 
-let minutesDuration = getRandomIntegerNumber(0, MINUTES_MAX + 1);
-if (minutesDuration < 10) {
-  minutesDuration = `0` + minutesDuration;
-}
+const getMinutes = (minutesMax) => {
+  let minutesDuration = getRandomIntegerNumber(0, minutesMax + 1);
+  if (minutesDuration < 10) {
+    minutesDuration = `0` + minutesDuration;
+  }
 
-let date = new Date(
-    getRandomIntegerNumber(YEAR_START, YEAR_FINISH),
-    getRandomIntegerNumber(0, MONTH_COUNT + 1),
-    getRandomIntegerNumber(1, DAYS_COUNT + 1)
-);
+  return minutesDuration;
+};
 
-let year = date.getFullYear();
-let days = date.getDate();
-let month = date.getMonth();
+const getDate = (yearStart, yearFinish, monthCount, daysCount) => {
+  let date = new Date(
+      getRandomIntegerNumber(yearStart, yearFinish),
+      getRandomIntegerNumber(0, monthCount + 1),
+      getRandomIntegerNumber(1, daysCount + 1)
+  );
 
-days = getDateWithZero(days);
+  let year = date.getFullYear();
+  let days = date.getDate();
+  let month = date.getMonth();
 
-let dates = {
-  DAYS: days,
-  MONTHS: month,
-  YEARS: year
+  days = getDateWithZero(days);
+
+  let dates = {
+    DAYS: days,
+    MONTHS: month,
+    YEARS: year
+  };
+
+  return dates;
 };
 
 const generateFilmCard = () => {
   return {
     title: getRandomArrayItem(TITLES),
     rating: getRandomNumberTwoDecimalPlaces(0, 10),
-    date: dates,
-    duration: hoursDuration + `h ` + minutesDuration + `m`,
+    date: getDate(YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT), // исправил на случайную дату
+    duration: getHours(HOURS_MAX) + `h ` + getMinutes(MINUTES_MAX) + `m`, // исправил на случайную продолжительность
     genre: getRandomArray(GENRES, DESCRIPTION_COUNT),
     poster: getRandomArrayItem(POSTERS),
     description: getRandomArray(DESCRIPTIONS, DESCRIPTION_COUNT).join(` `),

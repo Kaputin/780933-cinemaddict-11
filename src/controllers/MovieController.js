@@ -9,8 +9,9 @@ const Mode = {
 };
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, footerContainer, onDataChange, onViewChange) {
     this._filmListContainer = container;
+    this._footerContainer = footerContainer;
     this._onDataChange = onDataChange;
 
     this._onViewChange = onViewChange;
@@ -22,66 +23,37 @@ export default class MovieController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._onOpenPopupClick = this._onOpenPopupClick.bind(this);
     this._onClosePopupClick = this._onClosePopupClick.bind(this);
+    this._onWatchlistChange = this._onWatchlistChange.bind(this);
+    this._onWatchedChange = this._onWatchedChange.bind(this);
+    this._onFavoriteChange = this._onFavoriteChange.bind(this);
   }
 
-  render(footerContainer, filmCard) {
-    this._comments = generateComments(filmCard.commentsCount);
+  render(filmCard) {
+    this._filmCard = filmCard;
+    this._comments = generateComments(this._filmCard.commentsCount);
     const oldFilmCardElement = this._filmCardElement;
     const oldPopUp = this._popUp;
+    this._filmCardElement = new FilmCard(this._filmCard);
+    this._popUp = new PopUp(this._filmCard, this._comments);
 
-    this._filmCardElement = new FilmCard(filmCard);
-    this._popUp = new PopUp(filmCard, this._comments);
-    this._footerContainer = footerContainer;
 
     this._filmCardElement.setCardTitleClickHandler(this._onOpenPopupClick);
     this._filmCardElement.setCardPosterClickHandler(this._onOpenPopupClick);
     this._filmCardElement.setCardCommentsClickHandler(this._onOpenPopupClick);
 
-    this._filmCardElement.setWatchListButtonClickHandler((evt) => {
-      evt.preventDefault();
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isWatchlist: !filmCard.isWatchlist,
-      }));
-    });
+    this._filmCardElement.setWatchListButtonClickHandler(this._onWatchlistChange);
+    this._filmCardElement.setWatchedButtonClickHandler(this._onWatchedChange);
+    this._filmCardElement.setFavoritesButtonClickHandler(this._onFavoriteChange);
 
-    this._filmCardElement.setWatchedButtonClickHandler((evt) => {
-      evt.preventDefault();
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isWatched: !filmCard.isWatched,
-      }));
-    });
-
-    this._filmCardElement.setFavoritesButtonClickHandler((evt) => {
-      evt.preventDefault();
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isFavorite: !filmCard.isFavorite,
-      }));
-    });
-
-
-    this._popUp.setWatchListLabelClickHandler(() => {
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isWatchlist: !filmCard.isWatchlist,
-      }));
-    });
-
-    this._popUp.setFavoritesLabelClickHandler(() => {
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isFavorite: !filmCard.isFavorite,
-      }));
-    });
-
-    this._popUp.setWatchedLabelClickHandler(() => {
-      this._onDataChange(this, this._footerContainer, filmCard, Object.assign({}, filmCard, {
-        isWatched: !filmCard.isWatched,
-      }));
-    });
+    this._popUp.setWatchListLabelClickHandler(this._onWatchlistChange);
+    this._popUp.setWatchedLabelClickHandler(this._onWatchedChange);
+    this._popUp.setFavoritesLabelClickHandler(this._onFavoriteChange);
 
     if (oldPopUp && oldFilmCardElement) {
       replace(this._filmCardElement, oldFilmCardElement);
       replace(this._popUp, oldPopUp);
       document.addEventListener(`keydown`, this._onEscKeyDown); // временное решение, т.к. пока не знаю как связать реренд попапа и карточки, карточки в других блоках, меню количество
-      this._popUp.setCloseButtonClickHandler(this._onClosePopupClick);
+      this._popUp.setCloseButtonClickHandler(this._onClosePopupClick); // вторая проблема esc вешается на неоткрытый попап когда маленькая карточка заменяется
     } else {
       render(this._filmListContainer, this._filmCardElement, RenderPosition.BEFOREEND);
     }
@@ -127,5 +99,26 @@ export default class MovieController {
 
   _onClosePopupClick() {
     this._removePopUp();
+  }
+
+  _onWatchlistChange(evt) {
+    evt.preventDefault();
+    this._onDataChange(this, this._filmCard, Object.assign({}, this._filmCard, {
+      isWatchlist: !this._filmCard.isWatchlist,
+    }));
+  }
+
+  _onWatchedChange(evt) {
+    evt.preventDefault();
+    this._onDataChange(this, this._filmCard, Object.assign({}, this._filmCard, {
+      isWatched: !this._filmCard.isWatched,
+    }));
+  }
+
+  _onFavoriteChange(evt) {
+    evt.preventDefault();
+    this._onDataChange(this, this._filmCard, Object.assign({}, this._filmCard, {
+      isFavorite: !this._filmCard.isFavorite,
+    }));
   }
 }
