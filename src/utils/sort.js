@@ -1,6 +1,6 @@
 export const sortDiscussed = (arr) => {
   return arr.slice().sort(function (a, b) {
-    return b.commentsCount - a.commentsCount;
+    return b.commentsCount.length - a.commentsCount.length;
   });
 };
 

@@ -1,11 +1,11 @@
 import FilmCard from "../components/film-card.js";
 import PopUp from "../components/pop-up.js";
 import {generateComments} from "../mock/comments.js";
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 const Mode = {
   DEFAULT: `default`,
-  EDIT: `edit`,
+  POPUP: `popup`,
 };
 
 export default class MovieController {
@@ -30,7 +30,7 @@ export default class MovieController {
 
   render(filmCard) {
     this._filmCard = filmCard;
-    this._comments = generateComments(this._filmCard.commentsCount);
+    this._comments = generateComments(this._filmCard.commentsCount.length);
     const oldFilmCardElement = this._filmCardElement;
     const oldPopUp = this._popUp;
     this._filmCardElement = new FilmCard(this._filmCard);
@@ -65,9 +65,15 @@ export default class MovieController {
     }
   }
 
+  destroy() {
+    remove(this._filmCardElement);
+    remove(this._popUp);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+  }
+
   _addPopUp() {
     this._onViewChange();
-    this._mode = Mode.EDIT;
+    this._mode = Mode.POPUP;
     this._footerContainer.appendChild(this._popUp.getElement());
     document.addEventListener(`keydown`, this._onEscKeyDown);
     this._popUp.setCloseButtonClickHandler(this._onClosePopupClick);

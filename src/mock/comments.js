@@ -34,6 +34,7 @@ const generateComment = () => {
   };
 
   return {
+    id: getRandomIntegerNumber(0, 10),
     emoji: getRandomArrayItem(EMOJI),
     text: getRandomArrayItem(TEXT),
     author: getRandomArrayItem(AUTHOR),

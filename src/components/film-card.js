@@ -32,7 +32,7 @@ const createFilmCardTemplate = (filmCard) => {
       </p>
       <img src="./images/posters/${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${description}</p>
-      <a class="film-card__comments">${commentsCount} comments</a>
+      <a class="film-card__comments">${commentsCount.length} comments</a>
       <form class="film-card__controls">
       ${watchListButton}
       ${watchedButton}

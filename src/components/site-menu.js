@@ -1,16 +1,24 @@
 import AbstractComponent from "./abstract-component.js";
 
+const capitalize = (str) => {
+  return str.replace(/(^|\s)\S/g, (a) => {
+    return a.toUpperCase();
+  });
+};
+
 const createMenuItemMarkup = (name, count) => {
-  if (name === `All`) {
+
+  if (name === `all`) {
     return (
-      `<a href="#${name.toLowerCase()}.toLowerCase()" class="main-navigation__item main-navigation__item--active">${name} movies</a>`
+      `<a href="#${name}" data-filter-type="${name}" class="main-navigation__item main-navigation__item--active">${capitalize(name)} movies</a>`
     );
   } else {
     return (
-      `<a href="#${name.toLowerCase()}" class="main-navigation__item">${name} <span class="main-navigation__item-count">${count}</span></a>`
+      `<a href="#${name}"data-filter-type="${name}" class="main-navigation__item">${capitalize(name)} <span class="main-navigation__item-count">${count}</span></a>`
     );
   }
 };
+
 
 const createSiteMenuTemplate = (menuItems) => {
   const siteMenuMarkup = menuItems.map((it) => createMenuItemMarkup(it.name, it.count)).join(`\n`);
@@ -34,5 +42,24 @@ export default class SiteMenu extends AbstractComponent {
 
   getTemplate() {
     return createSiteMenuTemplate(this._menuItems);
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+
+      const filterName = evt.target.dataset.filterType;
+
+      const items = document.querySelectorAll(`.main-navigation__item`);
+      Array.from(items).forEach((item) => {
+        item.classList.remove(`main-navigation__item--active`);
+      });
+
+      evt.target.classList.add(`main-navigation__item--active`);
+
+      handler(filterName);
+    });
   }
 }

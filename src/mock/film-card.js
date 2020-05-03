@@ -1,5 +1,5 @@
 import {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray, getDateWithZero} from "./utils.js";
-import {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT} from "./const.js";
+import {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT, COMMENTS} from "./const.js";
 
 const DESCRIPTION_COUNT = 5;
 const COMMENTS_COUNT = 5;
@@ -45,6 +45,7 @@ const getDate = (yearStart, yearFinish, monthCount, daysCount) => {
 
 const generateFilmCard = () => {
   return {
+    id: String(new Date() + Math.random()),
     title: getRandomArrayItem(TITLES),
     rating: getRandomNumberTwoDecimalPlaces(0, 10),
     date: getDate(YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT), // исправил на случайную дату
@@ -52,7 +53,8 @@ const generateFilmCard = () => {
     genre: getRandomArray(GENRES, DESCRIPTION_COUNT),
     poster: getRandomArrayItem(POSTERS),
     description: getRandomArray(DESCRIPTIONS, DESCRIPTION_COUNT).join(` `),
-    commentsCount: getRandomIntegerNumber(0, COMMENTS_COUNT + 1), // +1 т.к. максимальное значение не учитывается в функции
+    // commentsCount: getRandomIntegerNumber(0, COMMENTS_COUNT + 1), // +1 т.к. максимальное значение не учитывается в функции
+    commentsCount: getRandomArray(COMMENTS, COMMENTS_COUNT + 1),
     isWatchlist: Math.random() > 0.5,
     isWatched: Math.random() > 0.5,
     isFavorite: Math.random() > 0.5,
