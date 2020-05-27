@@ -20,31 +20,7 @@ const getSortedFilmCards = (filmCards, sortType, from, to) => {
       sortedFilmCards = showingFilmCards.sort((a, b) => b.rating - a.rating);
       break;
     case SortType.DATE:
-      sortedFilmCards = showingFilmCards.sort((a, b) => {
-        if (b.date.YEARS > a.date.YEARS) {
-          return 1;
-        }
-        if (b.date.YEARS < a.date.YEARS) {
-          return -1;
-        }
-        if (b.date.YEARS === a.date.YEARS) {
-          if (b.date.MONTHS > a.date.MONTHS) {
-            return 1;
-          }
-          if (b.date.MONTHS < a.date.MONTHS) {
-            return -1;
-          }
-          if (b.date.MONTHS === a.date.MONTHS) {
-            if (b.date.DAYS > a.date.DAYS) {
-              return 1;
-            }
-            if (b.date.DAYS < a.date.DAYS) {
-              return -1;
-            }
-          }
-        }
-        return 0;
-      });
+      sortedFilmCards = showingFilmCards.sort((a, b) => b.date - a.date);
       break;
     case SortType.DEFAULT:
       sortedFilmCards = showingFilmCards;
@@ -55,9 +31,9 @@ const getSortedFilmCards = (filmCards, sortType, from, to) => {
 };
 
 export default class PageController {
-  constructor(container, footer, sort, moviesModel) {
+  constructor(container, body, sort, moviesModel) {
     this._container = container;
-    this._footerContainer = footer;
+    this._bodyContainer = body;
     this._moviesModel = moviesModel;
 
     this._sortComponent = sort;
@@ -81,7 +57,15 @@ export default class PageController {
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  render() { // не обновляется карточка во всех блоках, подумать!!!!
+  hide() {
+    this._container.hide();
+  }
+
+  show() {
+    this._container.show();
+  }
+
+  render() {
     const filmCards = this._moviesModel.getFilmCards();
 
     if (filmCards.length === 0) {
@@ -97,7 +81,7 @@ export default class PageController {
     this._renderFilmMostCommented(filmCards);
   }
 
-  _renderFilmList(filmCards) { // сюда попробовать  2 других блока
+  _renderFilmList(filmCards) {
     const newFilmCards = this._renderFilmCards(this._filmListContainer, filmCards, this._onDataChange, this._onViewChange);
     this._showedFilmCardsControllers = this._showedFilmCardsControllers.concat(newFilmCards);
     this._showingFilmCardsCount = this._showedFilmCardsControllers.length;
@@ -110,7 +94,9 @@ export default class PageController {
     const filmListTopRatedContainer = filmListTopRated.querySelector(`.films-list__container`);
     const ratingFilmCards = sortRating(filmCards.slice());
 
-    this._renderFilmCards(filmListTopRatedContainer, ratingFilmCards.slice(0, EXTRA_COUNT), this._onDataChange, this._onViewChange);
+    const newFilms = this._renderFilmCards(filmListTopRatedContainer, ratingFilmCards.slice(0, EXTRA_COUNT), this._onDataChange, this._onViewChange);
+
+    this._showedFilmTopRatedControllers = newFilms;
   }
 
   _renderFilmMostCommented(filmCards) {
@@ -120,12 +106,14 @@ export default class PageController {
     const filmListMostCommentedContainer = filmListMostCommented.querySelector(`.films-list__container`);
     const extrafilmCards = sortDiscussed(filmCards.slice());
 
-    this._renderFilmCards(filmListMostCommentedContainer, extrafilmCards.slice(0, EXTRA_COUNT), this._onDataChange, this._onViewChange);
+    const newFilms = this._renderFilmCards(filmListMostCommentedContainer, extrafilmCards.slice(0, EXTRA_COUNT), this._onDataChange, this._onViewChange);
+
+    this._showedMostCommentedFilmControllers = newFilms;
   }
 
-  _removeFilmCards() {
-    this._showedFilmCardsControllers.forEach((filmCardController) => filmCardController.destroy());
-    this._showedFilmCardsControllers = [];
+  _removeFilmCards(controller) {
+    controller.forEach((filmCardController) => filmCardController.destroy());
+    controller = [];
   }
 
   _renderShowMoreButton() {
@@ -154,19 +142,44 @@ export default class PageController {
   }
 
   _updateFilmCards(count) {
-    this._removeFilmCards();
+    this._removeFilmCards(this._showedFilmCardsControllers);
+    this._removeFilmCards(this._showedMostCommentedFilmControllers);
+    this._removeFilmCards(this._showedFilmTopRatedControllers);
     const updatefilmCards = this._moviesModel.getFilmCards();
     this._onSortTypeReset();
     const sortedFilmCards = getSortedFilmCards(updatefilmCards, SortType.DEFAULT, 0, this._showingFilmsCount);
     this._renderFilmList(sortedFilmCards.slice(0, count));
     this._renderShowMoreButton();
+
+    this._renderFilmTopRated(this._moviesModel.getFilmCardsAll());
+    this._renderFilmMostCommented(this._moviesModel.getFilmCardsAll());
   }
 
-  _onDataChange(filmCardController, oldData, newData) {
-    const isSuccess = this._moviesModel.updateFilmCards(oldData.id, newData);
-
-    if (isSuccess) {
-      filmCardController.render(newData);
+  _onDataChange(filmCardController, oldData, newData, comment) {
+    if (!newData) {
+      const isSuccess = this._moviesModel.removeComment(comment, oldData);
+      if (isSuccess) {
+        const allControllers = this._showedFilmCardsControllers.concat(this._showedMostCommentedFilmControllers, this._showedFilmTopRatedControllers);
+        allControllers.filter((filmController) => filmController.getFilm() === oldData)
+        .forEach((filmController) => filmController.render(oldData));
+        // придумать и вставить сюда отдельное обновление блока с комментариями и убрать из общего массива
+        // убрать передаваемы контроллер, т.к. ищу по всем и он не нужен?
+      }
+    } else if (!oldData) {
+      const isSuccess = this._moviesModel.addComment(comment, newData);
+      if (isSuccess) {
+        const allControllers = this._showedFilmCardsControllers.concat(this._showedMostCommentedFilmControllers, this._showedFilmTopRatedControllers);
+        allControllers.filter((filmController) => filmController.getFilm() === newData)
+        .forEach((filmController) => filmController.render(newData));
+        // придумать и вставить сюда отдельное обновление блока с комментариями и убрать из общего массива
+      }
+    } else {
+      const isSuccess = this._moviesModel.updateFilmCards(oldData.id, newData);
+      if (isSuccess) {
+        const allControllers = this._showedFilmCardsControllers.concat(this._showedMostCommentedFilmControllers, this._showedFilmTopRatedControllers);
+        allControllers.filter((filmController) => filmController.getFilm() === oldData)
+        .forEach((filmController) => filmController.render(newData));
+      }
     }
   }
 
@@ -176,7 +189,7 @@ export default class PageController {
 
   _renderFilmCards(filmListContainer, filmCards) {
     return filmCards.map((filmCard) => {
-      const filmCardController = new MovieController(filmListContainer, this._footerContainer, this._onDataChange, this._onViewChange);
+      const filmCardController = new MovieController(filmListContainer, this._bodyContainer, this._onDataChange, this._onViewChange);
 
       filmCardController.render(filmCard);
 
@@ -188,10 +201,15 @@ export default class PageController {
     this._showingFilmsCount = SHOWING_FILMS_COUNT_ON_START;
     const sortedFilmCards = getSortedFilmCards(this._moviesModel.getFilmCards(), sortType, 0, this._showingFilmsCount);
 
-    this._removeFilmCards();
+    this._removeFilmCards(this._showedFilmCardsControllers);
+    this._removeFilmCards(this._showedMostCommentedFilmControllers);
+    this._removeFilmCards(this._showedFilmTopRatedControllers);
     this._renderFilmList(sortedFilmCards);
 
     this._renderShowMoreButton();
+
+    this._renderFilmTopRated(this._moviesModel.getFilmCardsAll());
+    this._renderFilmMostCommented(this._moviesModel.getFilmCardsAll());
   }
 
   _onSortTypeReset() {

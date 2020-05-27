@@ -42,6 +42,23 @@ export default class Movies {
     return true;
   }
 
+  removeComment(commentId, filmCard) {
+    const index = filmCard.comments.findIndex((it) => it.id === commentId);
+
+    if (index === -1) {
+      return false;
+    }
+    filmCard.comments = [].concat(filmCard.comments.slice(0, index), filmCard.comments.slice(index + 1));
+
+    return this.updateFilmCards(filmCard.id, filmCard);
+  }
+
+  addComment(comment, filmCard) {
+    filmCard.comments = [].concat(filmCard.comments, comment);
+
+    return this.updateFilmCards(filmCard.id, filmCard);
+  }
+
   setFilterChangeHandler(handler) {
     this._filterChangeHandlers.push(handler);
   }

@@ -1,4 +1,4 @@
-const TITLES = [
+export const TITLES = [
   `Made for each other`,
   `Popeye meets sinbad`,
   `Sagebrush trail`,
@@ -8,21 +8,21 @@ const TITLES = [
   `The man with the golden arm`
 ];
 
-const DIRECTORS = [
+export const DIRECTORS = [
   `Anthony Mann`,
   `David Valdes`,
   `Robert Zemeckis`,
   `Steven Spielberg`,
 ];
 
-const WRITERS = [
+export const WRITERS = [
   `Frank Darabont`,
   `Anne Wigton`,
   `Heinz Herald`,
   `Richard Weil`
 ];
 
-const ACTORS = [
+export const ACTORS = [
   `Erich von Stroheim`,
   `Mary Beth Hughes`,
   `Dan Duryea`,
@@ -32,7 +32,7 @@ const ACTORS = [
   `Will Smith`,
 ];
 
-const POSTERS = [
+export const POSTERS = [
   `made-for-each-other.png`,
   `popeye-meets-sinbad.png`,
   `sagebrush-trail.jpg`,
@@ -41,30 +41,23 @@ const POSTERS = [
   `the-great-flamarion.jpg`,
   `the-man-with-the-golden-arm.jpg`
 ];
-const DESCRIPTIONS = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-  `Fusce tristique felis at fermentum pharetra.`,
-  `Aliquam id orci ut lectus varius viverra.`,
-  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
 
-  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-  `Sed sed nisi sed augue convallis suscipit in sed felis.`,
-  `Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
-  `In rutrum ac purus sit amet tempus.`
+export const DESCRIPTIONS = [
+  `The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback.The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback.The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback.The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback.`,
+  `The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit.`,
+  `His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant.`,
+  `Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.`,
 ];
 
-const GENRES = [
-  `Musical`,
-  `Western`,
-  `Drama`,
+export const GENRES = [
+  `Sci-Fi`,
+  `Animation`,
+  `Fantasy`,
   `Comedy`,
-  `Cartoon`,
-  `Mystery`,
+  `TV Series`,
 ];
 
-const COUNTRYS = [
+export const COUNTRYS = [
   `USA`,
   `Russia`,
   `France`,
@@ -73,7 +66,7 @@ const COUNTRYS = [
   `Spain`,
 ];
 
-const AGE_LIMITS = [
+export const AGE_LIMITS = [
   `0+`,
   `6+`,
   `12+`,
@@ -81,14 +74,14 @@ const AGE_LIMITS = [
   `18+`,
 ];
 
-const EMOJI = [
+export const EMOJI = [
   `angry.png`,
   `puke.png`,
   `sleeping.png`,
   `smile.png`
 ];
 
-const TEXT = [
+export const TEXT = [
   `Interesting setting and a good cast`,
   `Booooooooooring`,
   `Very very old. Meh`,
@@ -96,7 +89,7 @@ const TEXT = [
   `xaxaxaxaxa`
 ];
 
-const AUTHOR = [
+export const AUTHOR = [
   `Tim Macoveev`,
   `Lebron James`,
   `Koby Bryant`,
@@ -104,7 +97,7 @@ const AUTHOR = [
   `Shaquille ONeal`
 ];
 
-const MONTH_NAMES = [
+export const MONTH_NAMES = [
   `January`,
   `February`,
   `March`,
@@ -119,11 +112,7 @@ const MONTH_NAMES = [
   `December`,
 ];
 
-const COMMENTS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-const YEAR_START = 1888;
-const YEAR_FINISH = 2020;
-const MONTH_COUNT = 11;
-const DAYS_COUNT = 31;
-
-export {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, EMOJI, TEXT, AUTHOR, MONTH_NAMES, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT, COMMENTS};
+export const YEAR_START = 1888;
+export const YEAR_FINISH = 2020;
+export const MONTH_COUNT = 11;
+export const DAYS_COUNT = 31;

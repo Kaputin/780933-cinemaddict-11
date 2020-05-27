@@ -1,12 +1,12 @@
-import {MONTH_NAMES} from "../mock/const.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
+import {formatTime, formatDateRelease, formatDateComment} from "../utils/common.js";
 
 const createCheckboxMarkup = (name, isActive = true) => {
   return (`<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isActive ? `checked` : ``}>`);
 };
 
 const createCommentMarkup = (comment) => {
-  const {emoji, text, author, date} = comment;
+  const {id, emoji, text, author, date} = comment;
 
   return (
     `<li class="film-details__comment">
@@ -17,8 +17,8 @@ const createCommentMarkup = (comment) => {
         <p class="film-details__comment-text">${text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
-          <span class="film-details__comment-day">${date.YEARS}/${date.MONTHS}/${date.DAYS} ${date.HOURS}:${date.MINUTES}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <span class="film-details__comment-day">${formatDateComment(date)}</span>
+          <button data-comment-id="${id}" class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>`
@@ -31,14 +31,14 @@ const createGenreMarkup = (genre) => {
   );
 };
 
-const createPopUpTemplate = (filmCard, comments, emoji) => {
-  const {title, rating, genre, date, duration, poster, description, commentsCount, writers, actors, country, ageLimit, director} = filmCard;
+const createEmojiMarkup = (emoji) => emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">` : ``;
+
+const createPopUpTemplate = (filmCard, emoji) => {
+  const {title, rating, genre, date, duration, poster, description, comments, writers, actors, country, ageLimit, director} = filmCard;
 
   const watchListCheckbox = createCheckboxMarkup(`watchlist`, !filmCard.isWatchlist);
   const watchedCheckbox = createCheckboxMarkup(`watched`, !filmCard.isWatched);
   const favoritesCheckbox = createCheckboxMarkup(`favorite`, !filmCard.isFavorite);
-
-  const createEmojiMarkup = emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">` : ``;
 
   const commentsMarkup = comments.map((it) => createCommentMarkup(it)).join(`\n`);
   const genresMarkup = genre.map((it) => createGenreMarkup(it)).join(`\n`);
@@ -92,11 +92,11 @@ const createPopUpTemplate = (filmCard, comments, emoji) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${date.DAYS} ${MONTH_NAMES[date.MONTHS]} ${date.YEARS}</td>
+                  <td class="film-details__cell">${formatDateRelease(date)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formatTime(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
@@ -129,15 +129,15 @@ const createPopUpTemplate = (filmCard, comments, emoji) => {
         </div>
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount.length}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
-            ${commentsMarkup}
+              ${commentsMarkup}
             </ul>
 
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label">
-              ${createEmojiMarkup}
+              ${createEmojiMarkup(emoji)}
               </div>
 
               <label class="film-details__comment-label">
@@ -173,23 +173,27 @@ const createPopUpTemplate = (filmCard, comments, emoji) => {
   );
 };
 
+
 export default class PopUp extends AbstractSmartComponent {
-  constructor(filmCard, comments) {
+  constructor(filmCard) {
     super();
 
     this._filmCard = filmCard;
-    this._comments = comments;
 
     this._addCloseButtonHandler = null;
     this._addWatchListLabelonHandler = null;
     this._addWatchedLabelonHandler = null;
     this._addFavoritesLabelonHandler = null;
+    this._addDeleteCommentonHandler = null;
+    this._addCommentonHandler = null;
     this._emoji = null;
     this._subscribeOnEvents();
+    this._rerenderEmoji();
+
   }
 
   getTemplate() {
-    return createPopUpTemplate(this._filmCard, this._comments, this._emoji);
+    return createPopUpTemplate(this._filmCard, this._emoji);
   }
 
   recoveryListeners() {
@@ -197,6 +201,8 @@ export default class PopUp extends AbstractSmartComponent {
     this.setWatchListLabelClickHandler(this._addWatchListLabelonHandler);
     this.setWatchedLabelClickHandler(this._addWatchedLabelonHandler);
     this.setFavoritesLabelClickHandler(this._addFavoritesLabelonHandler);
+    this.setDeleteCommentClickHandler(this._addDeleteCommentonHandler);
+    this.setAddCommentKeydownHandler(this._addCommentonHandler);
     this._subscribeOnEvents();
   }
 
@@ -208,11 +214,13 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
     this._addCloseButtonHandler = handler;
+
   }
 
   removeCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .removeEventListener(`click`, handler);
+
   }
 
   setWatchListLabelClickHandler(handler) {
@@ -227,6 +235,7 @@ export default class PopUp extends AbstractSmartComponent {
     this._addWatchedLabelonHandler = handler;
   }
 
+
   setFavoritesLabelClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
@@ -234,13 +243,39 @@ export default class PopUp extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
-    const element = this.getElement();
+    this._rerenderEmoji();
+  }
 
-    element.querySelectorAll(`.film-details__emoji-item`).forEach((it) => {
+  _rerenderEmoji() {
+    this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((it) => {
       it.addEventListener(`click`, (event) => {
+        const emojiConteiner = document.querySelector(`.film-details__add-emoji-label`);
         this._emoji = event.target.value;
-        this.rerender();
+        const newEmoji = createEmojiMarkup(this._emoji);
+        emojiConteiner.innerHTML = newEmoji;
       });
     });
+  }
+
+  resetComment() {
+    const commentConteiner = document.querySelector(`.film-details__comment-input`);
+    commentConteiner.value = ``;
+    const emojiConteiner = document.querySelector(`.film-details__add-emoji-label`);
+    emojiConteiner.innerHTML = ``;
+    this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((it) => {
+      it.checked = false;
+    });
+  }
+
+  setDeleteCommentClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__comments-list`)
+      .addEventListener(`click`, handler);
+    this._addDeleteCommentonHandler = handler;
+  }
+
+  setAddCommentKeydownHandler(handler) {
+    this.getElement().querySelector(`.film-details__inner`)
+      .addEventListener(`keydown`, handler);
+    this._addCommentonHandler = handler;
   }
 }

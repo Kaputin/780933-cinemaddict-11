@@ -1,9 +1,11 @@
-const FILM_COUNT = 14;
+const FILM_COUNT = 5;
 
-import RatingProfile from "./components/rating.js";
-// import SiteMenu from "./components/site-menu.js";
+import Rating from "./components/rating.js";
 import FilterController from "./controllers/filter.js";
+import Navigation from "./components/navigation.js";
 import Sort from "./components/sort.js";
+import Statistic from "./components/statistic.js";
+import {MenuItem} from "./const.js";
 import Content from "./components/content.js";
 import PageController from "./controllers/PageController.js";
 import FooterStatistics from "./components/footer-statistics.js";
@@ -15,8 +17,7 @@ import {render, RenderPosition} from "./utils/render.js";
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
-// const siteDocElement = document.querySelector(`body`); // Только сейчас понял, что поап появляется в футере, который я передаю, может тогда передавать боди, чтобы он появлялся после футера?
-// как в марапе, но тогда он появляется после скриптов
+const siteDocElement = document.querySelector(`body`);
 const siteFooterStatistics = siteFooterElement.querySelector(`.footer__statistics`);
 
 
@@ -24,14 +25,39 @@ const filmCards = generateFilmCards(FILM_COUNT);
 const moviesModel = new MoviesModel();
 moviesModel.setFilmCards(filmCards);
 
-render(siteHeaderElement, new RatingProfile(), RenderPosition.BEFOREEND);
-const filterController = new FilterController(siteMainElement, moviesModel);
+const ratingComponent = new Rating(moviesModel);
+render(siteHeaderElement, ratingComponent, RenderPosition.BEFOREEND);
+
+const navigationComponent = new Navigation();
+render(siteMainElement, navigationComponent, RenderPosition.BEFOREEND);
+const siteNavigationElements = siteMainElement.querySelector(`.main-navigation`);
+const filterController = new FilterController(siteNavigationElements, moviesModel);
 filterController.render();
 const sort = new Sort();
-render(siteMainElement, sort, RenderPosition.BEFOREEND); // Добавил сортировку
+render(siteMainElement, sort, RenderPosition.BEFOREEND);
 
 const content = new Content();
 render(siteMainElement, content, RenderPosition.BEFOREEND);
-const contentController = new PageController(content, siteFooterElement, sort, moviesModel);
+const contentController = new PageController(content, siteDocElement, sort, moviesModel);
 contentController.render(filmCards);
 render(siteFooterStatistics, new FooterStatistics(FILM_COUNT), RenderPosition.BEFOREEND);
+
+const statistic = new Statistic(moviesModel, ratingComponent.getRating());
+render(siteMainElement, statistic, RenderPosition.BEFOREEND);
+statistic.hide();
+
+navigationComponent.setNavigationChangeHandler((menuItem) => {
+  switch (menuItem) {
+    case MenuItem.STATS:
+      contentController.hide();
+      sort.hide();
+      statistic.show();
+      break;
+    case MenuItem.FILMS:
+      statistic.hide();
+      contentController.show();
+      sort.getSortTypeReset();
+      sort.show();
+      break;
+  }
+});

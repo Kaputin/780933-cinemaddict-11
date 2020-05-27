@@ -1,6 +1,5 @@
 import FilmCard from "../components/film-card.js";
 import PopUp from "../components/pop-up.js";
-import {generateComments} from "../mock/comments.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 const Mode = {
@@ -18,24 +17,33 @@ export default class MovieController {
     this._mode = Mode.DEFAULT;
 
     this._filmCardElement = null;
-    this._comments = null;
     this._popUp = null;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._onOpenPopupClick = this._onOpenPopupClick.bind(this);
     this._onClosePopupClick = this._onClosePopupClick.bind(this);
+    this._onDeleteCommentClick = this._onDeleteCommentClick.bind(this);
+    this._onAddCommentKeydown = this._onAddCommentKeydown.bind(this);
     this._onWatchlistChange = this._onWatchlistChange.bind(this);
     this._onWatchedChange = this._onWatchedChange.bind(this);
     this._onFavoriteChange = this._onFavoriteChange.bind(this);
+
   }
 
   render(filmCard) {
     this._filmCard = filmCard;
-    this._comments = generateComments(this._filmCard.commentsCount.length);
+
     const oldFilmCardElement = this._filmCardElement;
     const oldPopUp = this._popUp;
     this._filmCardElement = new FilmCard(this._filmCard);
-    this._popUp = new PopUp(this._filmCard, this._comments);
 
+    this._popUp = new PopUp(this._filmCard);
+
+    if (oldPopUp && oldFilmCardElement) {
+      replace(this._filmCardElement, oldFilmCardElement);
+      replace(this._popUp, oldPopUp);
+    } else {
+      render(this._filmListContainer, this._filmCardElement, RenderPosition.BEFOREEND);
+    }
 
     this._filmCardElement.setCardTitleClickHandler(this._onOpenPopupClick);
     this._filmCardElement.setCardPosterClickHandler(this._onOpenPopupClick);
@@ -48,15 +56,10 @@ export default class MovieController {
     this._popUp.setWatchListLabelClickHandler(this._onWatchlistChange);
     this._popUp.setWatchedLabelClickHandler(this._onWatchedChange);
     this._popUp.setFavoritesLabelClickHandler(this._onFavoriteChange);
+    this._popUp.setDeleteCommentClickHandler(this._onDeleteCommentClick);
+    this._popUp.setAddCommentKeydownHandler(this._onAddCommentKeydown);
+    this._popUp.setCloseButtonClickHandler(this._onClosePopupClick);
 
-    if (oldPopUp && oldFilmCardElement) {
-      replace(this._filmCardElement, oldFilmCardElement);
-      replace(this._popUp, oldPopUp);
-      document.addEventListener(`keydown`, this._onEscKeyDown); // временное решение, т.к. пока не знаю как связать реренд попапа и карточки, карточки в других блоках, меню количество
-      this._popUp.setCloseButtonClickHandler(this._onClosePopupClick); // вторая проблема esc вешается на неоткрытый попап когда маленькая карточка заменяется
-    } else {
-      render(this._filmListContainer, this._filmCardElement, RenderPosition.BEFOREEND);
-    }
   }
 
   setDefaultView() {
@@ -74,22 +77,19 @@ export default class MovieController {
   _addPopUp() {
     this._onViewChange();
     this._mode = Mode.POPUP;
-    this._footerContainer.appendChild(this._popUp.getElement());
+    render(this._footerContainer, this._popUp, RenderPosition.BEFOREEND);
     document.addEventListener(`keydown`, this._onEscKeyDown);
-    this._popUp.setCloseButtonClickHandler(this._onClosePopupClick);
-    this._filmCardElement.removeCardTitleClickHandler(this._onOpenPopupClick);
-    this._filmCardElement.removeCardPosterClickHandler(this._onOpenPopupClick);
-    this._filmCardElement.removeCardCommentsClickHandler(this._onOpenPopupClick);
   }
 
   _removePopUp() {
-    this._mode = Mode.DEFAULT;
-    this._footerContainer.removeChild(this._popUp.getElement());
-    this._filmCardElement.setCardTitleClickHandler(this._onOpenPopupClick);
-    this._filmCardElement.setCardPosterClickHandler(this._onOpenPopupClick);
-    this._filmCardElement.setCardCommentsClickHandler(this._onOpenPopupClick);
+    this._popUp.resetComment();
+
+    const body = document.querySelector(`body`);
+    body.removeChild(this._popUp.getElement());
+
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._popUp.removeCloseButtonClickHandler(this._onClosePopupClick);
+
+    this._mode = Mode.DEFAULT;
   }
 
   _onEscKeyDown(evt) {
@@ -119,6 +119,7 @@ export default class MovieController {
     this._onDataChange(this, this._filmCard, Object.assign({}, this._filmCard, {
       isWatched: !this._filmCard.isWatched,
     }));
+
   }
 
   _onFavoriteChange(evt) {
@@ -127,4 +128,52 @@ export default class MovieController {
       isFavorite: !this._filmCard.isFavorite,
     }));
   }
+
+  _onDeleteCommentClick(evt) {
+    evt.preventDefault();
+    if (evt.target.tagName !== `BUTTON`) {
+      return;
+    }
+
+    const commentId = evt.target.dataset.commentId;
+    this._onDataChange(this, this._filmCard, null, commentId);
+  }
+
+  _onAddCommentKeydown(evt) {
+    const isCombination = evt.key === `Enter` && evt.ctrlKey;
+    if (isCombination) {
+      const text = document.querySelector(`.film-details__comment-input`);
+      const emoji = document.querySelector(`.film-details__add-emoji-label img`);
+
+      if (!emoji) {
+        return;
+      }
+
+      const date = new Date();
+      const promo = {
+        id: String(new Date() + Math.random()),
+        emoji: emoji.alt + `.png`,
+        text: text.value,
+        author: `ЯНИС`,
+        date: {
+          DAYS: date.getDate(),
+          MONTHS: date.getMonth(),
+          HOURS: date.getHours(),
+          MINUTES: date.getMinutes(),
+          YEARS: date.getFullYear()
+        }
+      };
+
+      if (!promo.text) {
+        return;
+      }
+
+      this._onDataChange(this, null, this._filmCard, promo);
+    }
+  }
+
+  getFilm() {
+    return this._filmCardElement.getFilmCardData();
+  }
+
 }
