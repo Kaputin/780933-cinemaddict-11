@@ -84,7 +84,7 @@ export default class MovieController {
   _removePopUp() {
     this._popUp.resetComment();
 
-    const body = document.querySelector(`body`);
+    const body = document.querySelector(`body`); // переделать на гетэлемент
     body.removeChild(this._popUp.getElement());
 
     document.removeEventListener(`keydown`, this._onEscKeyDown);
@@ -118,8 +118,8 @@ export default class MovieController {
     evt.preventDefault();
     this._onDataChange(this, this._filmCard, Object.assign({}, this._filmCard, {
       isWatched: !this._filmCard.isWatched,
+      watchingDate: new Date(), // просмотренные фильмы в статистике чтобы правильно выгружались, если я сегодня добавил в просмотренные.
     }));
-
   }
 
   _onFavoriteChange(evt) {
@@ -135,8 +135,7 @@ export default class MovieController {
       return;
     }
 
-    const commentId = evt.target.dataset.commentId;
-    this._onDataChange(this, this._filmCard, null, commentId);
+    this._onDataChange(this, this._filmCard, null, evt.target.dataset.commentId);
   }
 
   _onAddCommentKeydown(evt) {

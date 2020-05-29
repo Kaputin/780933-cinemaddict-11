@@ -10,11 +10,8 @@
     "start": "webpack-dev-server --open"
   },
   "devDependencies": {
-    "chart.js": "2.9.3",
-    "chartjs-plugin-datalabels": "0.7.0",
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
-    "moment": "2.26.0",
     "moment-locales-webpack-plugin": "1.2.0",
     "webpack": "4.42.1",
     "webpack-cli": "3.3.11",
@@ -24,6 +21,8 @@
     "node": "10"
   },
   "dependencies": {
-    "moment": "2.26.0"
+    "moment": "2.26.0",
+    "chart.js": "2.9.3",
+    "chartjs-plugin-datalabels": "0.7.0"
   }
 }

@@ -1,7 +1,7 @@
 import {getRandomArrayItem, getRandomIntegerNumber, getRandomNumberTwoDecimalPlaces, getRandomArray} from "./utils.js";
 import {generateComments} from "./comments.js";
 
-import {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, YEAR_START, YEAR_FINISH, MONTH_COUNT, DAYS_COUNT} from "./const.js";
+import {TITLES, DIRECTORS, WRITERS, ACTORS, POSTERS, DESCRIPTIONS, GENRES, COUNTRYS, AGE_LIMITS, Year, MONTH_COUNT, DAYS_COUNT} from "./const.js";
 
 const DESCRIPTION_COUNT = 5;
 const COMMENTS_COUNT = 5;
@@ -9,28 +9,12 @@ const HOURS_MAX = 3;
 const MINUTES_MAX = 59;
 const DURETION_MAX = 1000;
 
-
-// const getHours = (hoursMax) => {
-//   let hoursDuration = getRandomIntegerNumber(0, hoursMax + 1);
-//
-//   return hoursDuration;
-// };
-//
-// const getMinutes = (minutesMax) => {
-//   let minutesDuration = getRandomIntegerNumber(0, minutesMax + 1);
-//   if (minutesDuration < 10) {
-//     minutesDuration = `0` + minutesDuration;
-//   }
-//
-//   return minutesDuration;
-// };
-
 const generateFilmCard = () => {
   return {
     id: String(new Date() + Math.random()),
     title: getRandomArrayItem(TITLES),
     rating: getRandomNumberTwoDecimalPlaces(0, 10),
-    date: new Date(getRandomIntegerNumber(YEAR_START, YEAR_FINISH), getRandomIntegerNumber(0, MONTH_COUNT + 1), getRandomIntegerNumber(1, DAYS_COUNT + 1)),
+    date: new Date(getRandomIntegerNumber(Year.START, Year.FINISH), getRandomIntegerNumber(0, MONTH_COUNT + 1), getRandomIntegerNumber(1, DAYS_COUNT + 1)),
     duration: getRandomIntegerNumber(0, DURETION_MAX), // исправил на случайную продолжительность
     genre: getRandomArray(GENRES, DESCRIPTION_COUNT),
     poster: getRandomArrayItem(POSTERS),
@@ -48,11 +32,8 @@ const generateFilmCard = () => {
   };
 };
 
-const generateFilmCards = (count) => {
+export const generateFilmCards = (count) => {
   return new Array(count)
     .fill(``)
     .map(generateFilmCard);
 };
-
-
-export {generateFilmCards};

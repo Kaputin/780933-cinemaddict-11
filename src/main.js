@@ -1,4 +1,4 @@
-const FILM_COUNT = 5;
+const FILM_COUNT = 4;
 
 import Rating from "./components/rating.js";
 import FilterController from "./controllers/filter.js";
@@ -38,11 +38,11 @@ render(siteMainElement, sort, RenderPosition.BEFOREEND);
 
 const content = new Content();
 render(siteMainElement, content, RenderPosition.BEFOREEND);
-const contentController = new PageController(content, siteDocElement, sort, moviesModel);
+const contentController = new PageController(content, siteDocElement, sort, moviesModel, ratingComponent);
 contentController.render(filmCards);
 render(siteFooterStatistics, new FooterStatistics(FILM_COUNT), RenderPosition.BEFOREEND);
 
-const statistic = new Statistic(moviesModel, ratingComponent.getRating());
+const statistic = new Statistic(moviesModel, ratingComponent);
 render(siteMainElement, statistic, RenderPosition.BEFOREEND);
 statistic.hide();
 
@@ -56,7 +56,7 @@ navigationComponent.setNavigationChangeHandler((menuItem) => {
     case MenuItem.FILMS:
       statistic.hide();
       contentController.show();
-      sort.getSortTypeReset();
+      sort.sortTypeReset();
       sort.show();
       break;
   }

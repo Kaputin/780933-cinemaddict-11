@@ -10,25 +10,23 @@ const createNavigationTemplate = () => {
 };
 
 export default class Navigation extends AbstractComponent {
-  constructor() {
-    super();
-  }
-
   getTemplate() {
     return createNavigationTemplate();
   }
 
+  _unsetActiveClass() {
+    document.querySelector(`.main-navigation__item--active`).classList
+        .remove(`main-navigation__item--active`);
+  }
 
   setNavigationChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `A`) {
         return;
       }
-      const activeItem = document.querySelector(`.main-navigation__item--active`);
-      activeItem.classList.remove(`main-navigation__item--active`);
+      this._unsetActiveClass();
       evt.target.classList.add(`main-navigation__item--active`);
-      const navigationName = evt.target.dataset.navigation;
-      handler(navigationName);
+      handler(evt.target.dataset.navigation);
     });
   }
 }

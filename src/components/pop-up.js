@@ -246,22 +246,32 @@ export default class PopUp extends AbstractSmartComponent {
     this._rerenderEmoji();
   }
 
+  _createEmoji(emoji) {
+    const emojiConteiner = this.getElement().querySelector(`.film-details__add-emoji-label`);
+    emojiConteiner.innerHTML = createEmojiMarkup(emoji);
+  }
+
   _rerenderEmoji() {
     this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((it) => {
-      it.addEventListener(`click`, (event) => {
-        const emojiConteiner = document.querySelector(`.film-details__add-emoji-label`);
-        this._emoji = event.target.value;
-        const newEmoji = createEmojiMarkup(this._emoji);
-        emojiConteiner.innerHTML = newEmoji;
+      it.addEventListener(`click`, (evt) => {
+        this._createEmoji(evt.target.value);
       });
     });
   }
 
-  resetComment() {
-    const commentConteiner = document.querySelector(`.film-details__comment-input`);
+  _resetCommentInput() {
+    const commentConteiner = this.getElement().querySelector(`.film-details__comment-input`);
     commentConteiner.value = ``;
-    const emojiConteiner = document.querySelector(`.film-details__add-emoji-label`);
+  }
+
+  _resetCommentLabel() {
+    const emojiConteiner = this.getElement().querySelector(`.film-details__add-emoji-label`);
     emojiConteiner.innerHTML = ``;
+  }
+
+  resetComment() {
+    this._resetCommentInput();
+    this._resetCommentLabel();
     this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((it) => {
       it.checked = false;
     });

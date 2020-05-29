@@ -46,7 +46,7 @@ export default class Sort extends AbstractComponent {
       }
 
       const items = document.querySelectorAll(`.sort__button`);
-      Array.from(items).forEach((item) => {
+      items.forEach((item) => {
         item.classList.remove(`sort__button--active`);
       });
 
@@ -58,7 +58,7 @@ export default class Sort extends AbstractComponent {
     });
   }
 
-  getSortTypeReset() {
+  sortTypeReset() {
     const items = document.querySelectorAll(`.sort__button`);
 
     Array.from(items).forEach((item) => {

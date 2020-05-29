@@ -112,7 +112,10 @@ export const MONTH_NAMES = [
   `December`,
 ];
 
-export const YEAR_START = 1888;
-export const YEAR_FINISH = 2020;
+export const Year = {
+  START: 1888,
+  FINISH: 2020
+};
+
 export const MONTH_COUNT = 11;
 export const DAYS_COUNT = 31;

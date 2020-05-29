@@ -40,9 +40,7 @@ export default class SiteMenu extends AbstractComponent {
       if (evt.target.tagName !== `A`) {
         return;
       }
-      const filterName = evt.target.dataset.filterType;
-
-      handler(filterName);
+      handler(evt.target.dataset.filterType);
     });
   }
 }

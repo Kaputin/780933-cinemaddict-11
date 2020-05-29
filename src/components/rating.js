@@ -24,31 +24,20 @@ export default class Profile extends AbstractSmartComponent {
     this.getTemplate();
   }
 
-  rerender() {
-    super.rerender();
-  }
-
   getRating() {
     const numberWatchedFilmCards = getWatchedFilmCards(this._moviesModel.getFilmCardsAll()).length;
 
-    let rating;
-
     switch (true) {
       case numberWatchedFilmCards <= 0:
-        rating = ``;
-        break;
+        return ``;
       case numberWatchedFilmCards <= 10:
-        rating = `Novice`;
-        break;
+        return `Novice`;
       case numberWatchedFilmCards <= 20:
-        rating = `Fan`;
-        break;
+        return `Fan`;
       case numberWatchedFilmCards > 20:
-        rating = `Movie Buff`;
-        break;
+        return `Movie Buff`;
       default:
-        rating = `Error`;
+        return `Error`;
     }
-    return rating;
   }
 }

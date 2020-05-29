@@ -6,28 +6,20 @@ import {getFilmCardsByFilter} from "../utils/filter.js";
 import {formatDuration, getDurationWatchedFilms, capitalize} from "../utils/common.js";
 
 const getDateFrom = (activeStatisticMenu) => {
-  let dateFrom = new Date(0);
   const dateTo = new Date();
 
   switch (activeStatisticMenu) {
     case StatisticMenu.ALL:
-      dateFrom = new Date(0);
-      break;
+      return new Date(0);
     case StatisticMenu.MONTH:
-      dateFrom = dateTo.setMonth(dateTo.getMonth() - DateDuration.ONE_MONTH);
-      break;
+      return dateTo.setMonth(dateTo.getMonth() - DateDuration.ONE_MONTH);
     case StatisticMenu.TODAY:
-      dateFrom = dateTo.setDate(dateTo.getDate() - DateDuration.ONE_DAY);
-      break;
+      return dateTo.setDate(dateTo.getDate() - DateDuration.ONE_DAY);
     case StatisticMenu.WEEK:
-      dateFrom = dateTo.setDate(dateTo.getDate() - DateDuration.ONE_WEEK);
-      break;
+      return dateTo.setDate(dateTo.getDate() - DateDuration.ONE_WEEK);
     case StatisticMenu.YEAR:
-      dateFrom = dateTo.setFullYear(dateTo.getFullYear() - DateDuration.ONE_YEAR);
-      break;
+      return dateTo.setFullYear(dateTo.getFullYear() - DateDuration.ONE_YEAR);
   }
-
-  return dateFrom;
 };
 
 const getCountGenre = (filmCards, genre) => {
@@ -38,12 +30,10 @@ const getCountGenre = (filmCards, genre) => {
 };
 
 
-const getFilmCardGenres = (watchedFilmCards) => Object.values(GENRES).map((genre) => {
-  return {
-    genreName: genre,
-    count: getCountGenre(watchedFilmCards, genre),
-  };
-});
+const getFilmCardGenres = (watchedFilmCards) => Object.values(GENRES).map((genre) => ({
+  genreName: genre,
+  count: getCountGenre(watchedFilmCards, genre),
+}));
 
 const sortFilmCardGenres = (filmCardGenres) => filmCardGenres.sort((a, b) => b.count - a.count);
 
@@ -185,7 +175,7 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._filmCards, this._activeStatisticMenu, this._topGenreName, this._profileRating);
+    return createStatisticsTemplate(this._filmCards, this._activeStatisticMenu, this._topGenreName, this._profileRating.getRating());
   }
 
   show() {
@@ -232,11 +222,9 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
-    const element = this.getElement();
-    element.querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
-      const target = evt.target;
-      if (target && target.value) {
-        this._activeStatisticMenu = target.value;
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
+      if (evt.target && evt.target.value) {
+        this._activeStatisticMenu = evt.target.value;
         this._dateFrom = getDateFrom(this._activeStatisticMenu);
         this.show();
       }
