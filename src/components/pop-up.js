@@ -1,7 +1,8 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {formatTime, formatDateRelease, formatDateComment} from "../utils/common.js";
+import {encode} from "he";
 
-const createCheckboxMarkup = (name, isActive = true) => {
+const createCheckboxMarkup = (name, isActive) => {
   return (`<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isActive ? `checked` : ``}>`);
 };
 
@@ -11,7 +12,7 @@ const createCommentMarkup = (comment) => {
   return (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emoji}" width="55" height="55" alt="${emoji}">
+        <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">
       </span>
       <div>
         <p class="film-details__comment-text">${text}</p>
@@ -33,12 +34,12 @@ const createGenreMarkup = (genre) => {
 
 const createEmojiMarkup = (emoji) => emoji ? `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="${emoji}">` : ``;
 
-const createPopUpTemplate = (filmCard, emoji) => {
-  const {title, rating, genre, date, duration, poster, description, comments, writers, actors, country, ageLimit, director} = filmCard;
+const createPopUpTemplate = (filmCard, comments, emoji) => {
+  const {title, alternativeTitle, rating, genre, date, duration, poster, description, writers, actors, country, ageLimit, director} = filmCard;
 
-  const watchListCheckbox = createCheckboxMarkup(`watchlist`, !filmCard.isWatchlist);
-  const watchedCheckbox = createCheckboxMarkup(`watched`, !filmCard.isWatched);
-  const favoritesCheckbox = createCheckboxMarkup(`favorite`, !filmCard.isFavorite);
+  const watchListCheckbox = createCheckboxMarkup(`watchlist`, filmCard.isWatchlist);
+  const watchedCheckbox = createCheckboxMarkup(`watched`, filmCard.isWatched);
+  const favoritesCheckbox = createCheckboxMarkup(`favorite`, filmCard.isFavorite);
 
   const commentsMarkup = comments.map((it) => createCommentMarkup(it)).join(`\n`);
   const genresMarkup = genre.map((it) => createGenreMarkup(it)).join(`\n`);
@@ -60,16 +61,16 @@ const createPopUpTemplate = (filmCard, emoji) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+              <img class="film-details__poster-img" src="${poster}" alt="">
 
-              <p class="film-details__age">${ageLimit}</p>
+              <p class="film-details__age">${ageLimit}+</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${title}</h3>
-                  <p class="film-details__title-original">Original: ${title}</p>
+                  <p class="film-details__title-original">Original: ${alternativeTitle}</p>
                 </div>
 
                 <div class="film-details__rating">
@@ -175,10 +176,11 @@ const createPopUpTemplate = (filmCard, emoji) => {
 
 
 export default class PopUp extends AbstractSmartComponent {
-  constructor(filmCard) {
+  constructor(filmCard, comments) {
     super();
 
     this._filmCard = filmCard;
+    this._comments = comments;
 
     this._addCloseButtonHandler = null;
     this._addWatchListLabelonHandler = null;
@@ -193,7 +195,7 @@ export default class PopUp extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createPopUpTemplate(this._filmCard, this._emoji);
+    return createPopUpTemplate(this._filmCard, this._comments, this._emoji);
   }
 
   recoveryListeners() {
@@ -204,6 +206,7 @@ export default class PopUp extends AbstractSmartComponent {
     this.setDeleteCommentClickHandler(this._addDeleteCommentonHandler);
     this.setAddCommentKeydownHandler(this._addCommentonHandler);
     this._subscribeOnEvents();
+    this.getComments();
   }
 
   rerender() {
@@ -249,6 +252,7 @@ export default class PopUp extends AbstractSmartComponent {
   _createEmoji(emoji) {
     const emojiConteiner = this.getElement().querySelector(`.film-details__add-emoji-label`);
     emojiConteiner.innerHTML = createEmojiMarkup(emoji);
+    emojiConteiner.style.border = ``;
   }
 
   _rerenderEmoji() {
@@ -262,6 +266,7 @@ export default class PopUp extends AbstractSmartComponent {
   _resetCommentInput() {
     const commentConteiner = this.getElement().querySelector(`.film-details__comment-input`);
     commentConteiner.value = ``;
+    commentConteiner.style.border = ``;
   }
 
   _resetCommentLabel() {
@@ -281,6 +286,28 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__comments-list`)
       .addEventListener(`click`, handler);
     this._addDeleteCommentonHandler = handler;
+  }
+
+  getNewComment() {
+    const text = this.getElement().querySelector(`.film-details__comment-input`);
+    const emoji = this.getElement().querySelector(`.film-details__add-emoji-label img`);
+    const emojiConteiner = this.getElement().querySelector(`.film-details__add-emoji-label`);
+    if (!emoji) {
+      emojiConteiner.style.border = `2px solid red`;
+      return false;
+    }
+
+    const promo = {
+      comment: encode(text.value),
+      date: new Date(),
+      emotion: emoji.alt
+    };
+
+    if (!promo.comment) {
+      text.style.border = `2px solid red`;
+      return false;
+    }
+    return promo;
   }
 
   setAddCommentKeydownHandler(handler) {

@@ -43,7 +43,7 @@ export default class Movies {
   }
 
   removeComment(commentId, filmCard) {
-    const index = filmCard.comments.findIndex((it) => it.id === commentId);
+    const index = filmCard.comments.findIndex((it) => it === commentId);
 
     if (index === -1) {
       return false;
@@ -53,9 +53,8 @@ export default class Movies {
     return this.updateFilmCards(filmCard.id, filmCard);
   }
 
-  addComment(comment, filmCard) {
-    filmCard.comments = [].concat(filmCard.comments, comment);
-
+  addComment(comments, filmCard) {
+    filmCard.comments = comments;
     return this.updateFilmCards(filmCard.id, filmCard);
   }
 

@@ -19,6 +19,8 @@ const getDateFrom = (activeStatisticMenu) => {
       return dateTo.setDate(dateTo.getDate() - DateDuration.ONE_WEEK);
     case StatisticMenu.YEAR:
       return dateTo.setFullYear(dateTo.getFullYear() - DateDuration.ONE_YEAR);
+    default:
+      return `Error`;
   }
 };
 
