@@ -61,3 +61,5 @@ api.getfilmCards()
     render(siteHeaderElement, ratingComponent, RenderPosition.BEFOREEND);
     render(siteFooterStatistics, new FooterStatistics(filmCards), RenderPosition.BEFOREEND);
   });
+
+// открываю задание 8.2
