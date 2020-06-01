@@ -289,9 +289,7 @@ export default class PopUp extends AbstractSmartComponent {
   getNewComment() {
     const text = this.getElement().querySelector(`.film-details__comment-input`);
     const emoji = this.getElement().querySelector(`.film-details__add-emoji-label img`);
-    const emojiConteiner = this.getElement().querySelector(`.film-details__add-emoji-label`);
     if (!emoji) {
-      emojiConteiner.style.border = `2px solid red`;
       return false;
     }
 
@@ -301,10 +299,6 @@ export default class PopUp extends AbstractSmartComponent {
       emotion: emoji.alt
     };
 
-    if (!promo.comment) {
-      text.style.border = `2px solid red`;
-      return false;
-    }
     return promo;
   }
 

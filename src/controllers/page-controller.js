@@ -97,13 +97,11 @@ export default class PageController {
     render(this._content, this._topRated, RenderPosition.BEFOREEND);
     this._showedFilmTopRatedControllers = this._renderFilmCards(
         this._topRated.getElement().querySelector(`.films-list__container`),
-        ratingFilmCards.slice(0, EXTRA_COUNT),
-        this._onDataChange,
-        this._onViewChange
+        ratingFilmCards.slice(0, EXTRA_COUNT)
     );
   }
 
-  _renderFilmMostCommented(filmCards) { // проверить
+  _renderFilmMostCommented(filmCards) {
     const extrafilmCards = sortDiscussed(filmCards.slice());
 
     if (extrafilmCards.length === 0) {
@@ -112,9 +110,7 @@ export default class PageController {
     render(this._content, this._mostCommented, RenderPosition.BEFOREEND);
     this._showedMostCommentedFilmControllers = this._renderFilmCards(
         this._mostCommented.getElement().querySelector(`.films-list__container`),
-        extrafilmCards.slice(0, EXTRA_COUNT),
-        this._onDataChange,
-        this._onViewChange
+        extrafilmCards.slice(0, EXTRA_COUNT)
     );
   }
 
@@ -164,7 +160,7 @@ export default class PageController {
         this._showedFilmCardsControllers.concat(this._showedMostCommentedFilmControllers, this._showedFilmTopRatedControllers)
         .filter((filmController) => filmController.getFilm() === oldData)
         .forEach((filmController) => filmController.render(oldData));
-        // this._updateFilmMostCommented(this._moviesModel.getFilmCardsAll());
+        this._updateFilmMostCommented(this._moviesModel.getFilmCardsAll());
       }
     } else if (!oldData) {
       const isSuccess = this._moviesModel.addComment(comment, newData);
@@ -172,7 +168,7 @@ export default class PageController {
         this._showedFilmCardsControllers.concat(this._showedMostCommentedFilmControllers, this._showedFilmTopRatedControllers)
         .filter((filmController) => filmController.getFilmById() === newData.id)
         .forEach((filmController) => filmController.render(newData));
-        // this._updateFilmMostCommented(this._moviesModel.getFilmCardsAll());
+        this._updateFilmMostCommented(this._moviesModel.getFilmCardsAll());
       }
     } else {
       const isSuccess = this._moviesModel.updateFilmCards(oldData.id, newData);
@@ -185,23 +181,20 @@ export default class PageController {
     }
   }
 
-  // _updateFilmMostCommented(filmCards) { // возможо объединить с просто рендер этого блока или сократить хотябы
-  //   this._removeFilmCards(this._showedMostCommentedFilmControllers);
-  //
-  //   const extrafilmCards = sortDiscussed(filmCards.slice());
-  //   if (extrafilmCards.length === 0) {
-  //     this._mostCommented.hide();
-  //     return;
-  //   }
-  //
-  //   // if (!this._mostCommented.classList.contains('visually-hidden')) { придумать как возвращать если добавил клмменты
-  //   //   this._mostCommented.show();
-  //   // }
-  //
-  //   const filmListMostCommentedContainer = this._mostCommented.getElement().querySelector(`.films-list__container`);
-  //   const newFilms = this._renderFilmCards(filmListMostCommentedContainer, extrafilmCards.slice(0, EXTRA_COUNT), this._onDataChange, this._onViewChange);
-  //   this._showedMostCommentedFilmControllers = newFilms;
-  // }
+  _updateFilmMostCommented(filmCards) {
+    this._removeFilmCards(this._showedMostCommentedFilmControllers);
+    const extrafilmCards = sortDiscussed(filmCards.slice());
+    if (extrafilmCards.length === 0) {
+      this._mostCommented.hide();
+      return;
+    }
+
+    render(this._content, this._mostCommented, RenderPosition.BEFOREEND);
+    this._showedMostCommentedFilmControllers = this._renderFilmCards(
+        this._mostCommented.getElement().querySelector(`.films-list__container`),
+        extrafilmCards.slice(0, EXTRA_COUNT)
+    );
+  }
 
   _onViewChange() {
     this._showedFilmCardsControllers.forEach((it) => it.setDefaultView());
@@ -211,7 +204,6 @@ export default class PageController {
     return filmCards.map((filmCard) => {
       const filmCardController = new MovieController(filmListContainer, this._bodyContainer, this._onDataChange, this._onViewChange);
       filmCardController.render(filmCard);
-      // debugger;
       return filmCardController;
     });
   }
