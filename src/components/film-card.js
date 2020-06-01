@@ -1,5 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-
+import {formatTime} from "../utils/common.js";
 
 const createButtonMarkup = (name, isActive = true) => {
   if (name === `add-to-watchlist`) {
@@ -15,24 +15,29 @@ const createButtonMarkup = (name, isActive = true) => {
 
 const createFilmCardTemplate = (filmCard) => {
 
-  const {title, rating, date, duration, genre, poster, description, commentsCount} = filmCard;
+  const {title, rating, date, duration, genre, poster, description, comments} = filmCard;
 
-  const watchListButton = createButtonMarkup(`add-to-watchlist`, !filmCard.isWatchlist);
-  const watchedButton = createButtonMarkup(`mark-as-watched`, !filmCard.isWatched);
-  const favoritesButton = createButtonMarkup(`favorite`, !filmCard.isFavorite);
+  const watchListButton = createButtonMarkup(`add-to-watchlist`, filmCard.isWatchlist);
+  const watchedButton = createButtonMarkup(`mark-as-watched`, filmCard.isWatched);
+  const favoritesButton = createButtonMarkup(`favorite`, filmCard.isFavorite);
+  let descriptionNew = description;
+
+  if (description.length >= 140) {
+    descriptionNew = description.substr(0, 139) + `...`;
+  }
 
   return (
     `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${date.YEARS}</span>
-        <span class="film-card__duration">${duration}</span>
+        <span class="film-card__year">${date.getFullYear()}</span>
+        <span class="film-card__duration">${formatTime(duration)}</span>
         <span class="film-card__genre">${genre.join(` `)}</span>
       </p>
-      <img src="./images/posters/${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description}</p>
-      <a class="film-card__comments">${commentsCount} comments</a>
+      <img src="${poster}" alt="" class="film-card__poster">
+      <p class="film-card__description">${descriptionNew}</p>
+      <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
       ${watchListButton}
       ${watchedButton}
@@ -53,49 +58,48 @@ export default class FilmCard extends AbstractComponent {
     return createFilmCardTemplate(this._filmCard);
   }
 
+  getFilmCardData() {
+    return this._filmCard;
+  }
+
+  getFilmCardId() {
+    return this._filmCard.id;
+  }
+
   setCardTitleClickHandler(handler) {
     this.getElement().querySelector(`.film-card__title`)
       .addEventListener(`click`, handler);
-  }
-
-  removeCardTitleClickHandler(handler) {
-    this.getElement().querySelector(`.film-card__title`)
-      .removeEventListener(`click`, handler);
+    return this;
   }
 
   setCardPosterClickHandler(handler) {
     this.getElement().querySelector(`.film-card__poster`)
       .addEventListener(`click`, handler);
-  }
-
-  removeCardPosterClickHandler(handler) {
-    this.getElement().querySelector(`.film-card__poster`)
-      .removeEventListener(`click`, handler);
+    return this;
   }
 
   setCardCommentsClickHandler(handler) {
     this.getElement().querySelector(`.film-card__comments`)
       .addEventListener(`click`, handler);
-  }
-
-  removeCardCommentsClickHandler(handler) {
-    this.getElement().querySelector(`.film-card__comments`)
-      .removeEventListener(`click`, handler);
+    return this;
   }
 
   setWatchListButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, handler);
+    return this;
   }
 
   setFavoritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, handler);
+    return this;
   }
 
   setWatchedButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, handler);
+    return this;
   }
 
 }

@@ -1,34 +1,63 @@
-const FILM_COUNT = 16;
-
-import RatingProfile from "./components/rating.js";
-import SiteMenu from "./components/site-menu.js";
+import API from "./api.js";
+import Rating from "./components/rating.js";
+import FilterController from "./controllers/filter.js";
+import Navigation from "./components/navigation.js";
 import Sort from "./components/sort.js";
-import Content from "./components/content.js";
-import PageController from "./controllers/PageController.js";
-import FooterStatistics from "./components/footer-statistics.js";
-import {generateFilmCards} from "./mock/film-card.js";
-import {generateMenuItems} from "./mock/site-menu.js";
-import {render, RenderPosition} from "./utils/render.js";
+import Statistic from "./components/statistic.js";
+import {MenuItem, AUTHORIZATION, END_POINT} from "./const.js";
 
+import Content from "./components/content.js";
+import PageController from "./controllers/page-controller.js";
+import FooterStatistics from "./components/footer-statistics.js";
+import MoviesModel from "./models/movies.js";
+import {render, RenderPosition} from "./utils/render.js";
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
-// const siteDocElement = document.querySelector(`body`); Только сейчас понял, что поап появляется в футере, который я передаю, может тогда передавать боди, чтобы он появлялся после футера?
-// как в марапе, но тогда он появляется после скриптов
+const siteDocElement = document.querySelector(`body`);
 const siteFooterStatistics = siteFooterElement.querySelector(`.footer__statistics`);
 
-
-const filmCards = generateFilmCards(FILM_COUNT);
-const menuItems = generateMenuItems(filmCards);
-
-render(siteHeaderElement, new RatingProfile(), RenderPosition.BEFOREEND);
-render(siteMainElement, new SiteMenu(menuItems), RenderPosition.BEFOREEND);
+const api = new API(END_POINT, AUTHORIZATION);
+const moviesModel = new MoviesModel();
+const ratingComponent = new Rating(moviesModel);
+const navigationComponent = new Navigation();
 const sort = new Sort();
-render(siteMainElement, sort, RenderPosition.BEFOREEND); // Добавил сортировку
-
 const content = new Content();
+const contentController = new PageController(content, siteDocElement, sort, moviesModel, ratingComponent);
+const statistic = new Statistic(moviesModel, ratingComponent);
+
+
+render(siteMainElement, navigationComponent, RenderPosition.BEFOREEND);
+const siteNavigationElements = siteMainElement.querySelector(`.main-navigation`);
+const filterController = new FilterController(siteNavigationElements, moviesModel);
+filterController.render();
+
+render(siteMainElement, sort, RenderPosition.BEFOREEND);
 render(siteMainElement, content, RenderPosition.BEFOREEND);
-const contentController = new PageController(content, siteFooterElement, sort);
-contentController.render(filmCards);
-render(siteFooterStatistics, new FooterStatistics(FILM_COUNT), RenderPosition.BEFOREEND);
+render(siteMainElement, statistic, RenderPosition.BEFOREEND);
+statistic.hide();
+
+navigationComponent.setNavigationChangeHandler((menuItem) => {
+  switch (menuItem) {
+    case MenuItem.STATS:
+      contentController.hide();
+      sort.hide();
+      statistic.show();
+      break;
+    case MenuItem.FILMS:
+      statistic.hide();
+      contentController.show();
+      sort.sortTypeReset();
+      sort.show();
+      break;
+  }
+});
+
+api.getfilmCards()
+  .then((filmCards) => {
+    moviesModel.setFilmCards(filmCards);
+    contentController.render();
+    render(siteHeaderElement, ratingComponent, RenderPosition.BEFOREEND);
+    render(siteFooterStatistics, new FooterStatistics(filmCards), RenderPosition.BEFOREEND);
+  });

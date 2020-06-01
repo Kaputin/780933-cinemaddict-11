@@ -2,15 +2,14 @@ import AbstractComponent from "./abstract-component.js";
 
 const createFooterStatisticsTemplate = (count) => {
   return (
-    `<p>${count.toLocaleString(`ru`)} movies inside</p>`
+    `<p>${count} movies inside</p>`
   );
 };
 
 export default class FooterStatistics extends AbstractComponent {
-  constructor(count) {
+  constructor(filmsCards) {
     super();
-
-    this._count = count;
+    this._count = filmsCards.length;
   }
 
   getTemplate() {
