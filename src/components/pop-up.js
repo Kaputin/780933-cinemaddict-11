@@ -217,25 +217,21 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
     this._addCloseButtonHandler = handler;
-
-  }
-
-  removeCloseButtonClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__close-btn`)
-      .removeEventListener(`click`, handler);
-
+    return this;
   }
 
   setWatchListLabelClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, handler);
     this._addWatchListLabelonHandler = handler;
+    return this;
   }
 
   setWatchedLabelClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, handler);
     this._addWatchedLabelonHandler = handler;
+    return this;
   }
 
 
@@ -243,6 +239,7 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
     this._addFavoritesLabelonHandler = handler;
+    return this;
   }
 
   _subscribeOnEvents() {
@@ -286,6 +283,7 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__comments-list`)
       .addEventListener(`click`, handler);
     this._addDeleteCommentonHandler = handler;
+    return this;
   }
 
   getNewComment() {
@@ -314,5 +312,6 @@ export default class PopUp extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__inner`)
       .addEventListener(`keydown`, handler);
     this._addCommentonHandler = handler;
+    return this;
   }
 }

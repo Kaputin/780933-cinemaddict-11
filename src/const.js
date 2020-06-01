@@ -32,3 +32,6 @@ export const DateDuration = {
   ONE_WEEK: 7,
   ONE_YEAR: 1,
 };
+
+export const AUTHORIZATION = `Basic er883jdzbdw`;
+export const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;

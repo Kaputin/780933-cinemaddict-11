@@ -8,8 +8,13 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const STATUS_CODE = {
+  SUCCESS: 200,
+  MULTIPLE: 300
+};
+
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= STATUS_CODE.SUCCESS && response.status < STATUS_CODE.MULTIPLE) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -45,7 +50,7 @@ const API = class {
     .then(FilmCard.parseFilmCard);
   }
 
-  deletefilmCard(id) {
+  deleteComment(id) {
     return this._load({url: `comments/${id}`, method: Method.DELETE});
   }
 
