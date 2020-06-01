@@ -11,6 +11,9 @@ const Mode = {
   POPUP: `popup`,
 };
 
+const SHAKE_ANIMATION_TIMEOUT = 1500;
+const DIVIDER = 500;
+
 export default class MovieController {
   constructor(container, bodyContainer, onDataChange, onViewChange) {
     this._filmListContainer = container;
@@ -147,9 +150,18 @@ export default class MovieController {
     if (evt.target.tagName !== `BUTTON`) {
       return;
     }
+    const deleteCommentButton = evt.target;
+    deleteCommentButton.innerHTML = `Deleting...`;
+    deleteCommentButton.disabled = true;
+
     this._api.deleteComment(evt.target.dataset.commentId)
       .then(() => {
         this._onDataChange(this, this._filmCard, null, evt.target.dataset.commentId);
+      })
+      .catch(() => {
+        this.shake();
+        deleteCommentButton.innerHTML = `Delete`;
+        deleteCommentButton.disabled = false;
       });
   }
 
@@ -157,12 +169,23 @@ export default class MovieController {
     const isCombination = evt.key === `Enter` && evt.ctrlKey;
     if (isCombination) {
       const newComment = this._popUp.getNewComment();
+
       if (newComment) {
+        const textareaComment = evt.target;
+        textareaComment.disabled = true;
+        textareaComment.style.border = ``;
         const newFilmCard = FilmCardModel.clone(this._filmCard);
         this._api.addComment(newFilmCard, newComment)
-            .then(({movie}) => {
-              this._onDataChange(this, null, newFilmCard, movie.comments);
-            });
+          .then(({movie}) => {
+            this._onDataChange(this, null, newFilmCard, movie.comments);
+            this._popUp.resetComment();
+            textareaComment.disabled = false;
+          })
+          .catch(() => {
+            textareaComment.style.border = `2px solid red`;
+            this.shake();
+            textareaComment.disabled = false;
+          });
       } else {
         return;
       }
@@ -174,5 +197,13 @@ export default class MovieController {
   }
   getFilmById() {
     return this._filmCardElement.getFilmCardId();
+  }
+
+  shake() {
+    this._popUp.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / DIVIDER}s`;
+
+    setTimeout(() => {
+      this._popUp.getElement().style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }
