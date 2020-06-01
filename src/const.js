@@ -1,5 +1,5 @@
 export const FilterType = {
-  ALL: `all`,
+  ALL: `all-movies`,
   WATCHLIST: `watchlist`,
   HISTORY: `history`,
   FAVORITES: `favorites`,

@@ -8,17 +8,16 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const STATUS_CODE = {
+const StatusCode = {
   SUCCESS: 200,
   MULTIPLE: 300
 };
 
 const checkStatus = (response) => {
-  if (response.status >= STATUS_CODE.SUCCESS && response.status < STATUS_CODE.MULTIPLE) {
+  if (response.status >= StatusCode.SUCCESS && response.status < StatusCode.MULTIPLE) {
     return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
   }
+  throw new Error(`${response.status}: ${response.statusText}`);
 };
 
 const API = class {

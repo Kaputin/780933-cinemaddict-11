@@ -4,7 +4,7 @@ const MINUTES_IN_HOUR = 60;
 
 export const capitalize = (str) => str.replace(/(^|\s)\S/g, (a) => a.toUpperCase());
 
-export const formatTime = (duration) => moment.utc(duration * MS_IN_MINUTES).format(`HH`) + `h ` + moment.utc(duration * MS_IN_MINUTES).format(`mm`) + `m`;
+export const formatTime = (duration) => `${moment.utc(duration * MS_IN_MINUTES).format(`HH`)}h ${moment.utc(duration * MS_IN_MINUTES).format(`mm`)}m`;
 
 export const formatDateRelease = (date) => {
   return moment(date).format(`DD MMMM YYYY`);

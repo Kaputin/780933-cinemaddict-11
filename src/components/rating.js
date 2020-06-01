@@ -1,7 +1,7 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import {getWatchedFilmCards} from "../utils/filter.js";
 
-const RATINGS = {
+const ProfileRating = {
   NO_RATING: 0,
   NOVICE: 10,
   FAN: 20,
@@ -17,7 +17,7 @@ const createProfileTemplate = (rating) => {
   );
 };
 
-export default class Profile extends AbstractSmartComponent {
+export default class Rating extends AbstractSmartComponent {
   constructor(moviesModel) {
     super();
     this._moviesModel = moviesModel;
@@ -35,13 +35,13 @@ export default class Profile extends AbstractSmartComponent {
     const numberWatchedFilmCards = getWatchedFilmCards(this._moviesModel.getFilmCardsAll()).length;
 
     switch (true) {
-      case numberWatchedFilmCards <= RATINGS.NO_RATING:
+      case numberWatchedFilmCards <= ProfileRating.NO_RATING:
         return ``;
-      case numberWatchedFilmCards <= RATINGS.NOVICE:
+      case numberWatchedFilmCards <= ProfileRating.NOVICE:
         return `Novice`;
-      case numberWatchedFilmCards <= RATINGS.FAN:
+      case numberWatchedFilmCards <= ProfileRating.FAN:
         return `Fan`;
-      case numberWatchedFilmCards > RATINGS.MOVIE_BUFF:
+      case numberWatchedFilmCards > ProfileRating.MOVIE_BUFF:
         return `Movie Buff`;
       default:
         return `Error`;

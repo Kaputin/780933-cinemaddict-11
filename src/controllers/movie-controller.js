@@ -186,9 +186,8 @@ export default class MovieController {
             this.shake();
             textareaComment.disabled = false;
           });
-      } else {
-        return;
       }
+      return;
     }
   }
 

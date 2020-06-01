@@ -107,17 +107,10 @@ const renderChart = (statisticCtx, sortedFilmCardGenres) => {
 };
 
 const createStatisticMenuMarkup = (statisticMenuItem, isChecked) => {
-  if (statisticMenuItem === `all-time`) {
-    return (
-      `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${statisticMenuItem}" value="${statisticMenuItem}" ${isChecked ? `checked` : ``}>
-      <label for="statistic-${statisticMenuItem}" class="statistic__filters-label">All time</label>`
-    );
-  } else {
-    return (
-      `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${statisticMenuItem}" value="${statisticMenuItem}" ${isChecked ? `checked` : ``}>
-      <label for="statistic-${statisticMenuItem}" class="statistic__filters-label">${capitalize(statisticMenuItem)}</label>`
-    );
-  }
+  return (
+    `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${statisticMenuItem}" value="${statisticMenuItem}" ${isChecked ? `checked` : ``}>
+    <label for="statistic-${statisticMenuItem}" class="statistic__filters-label">${capitalize(statisticMenuItem).replace(/-/g, ` `)}</label>`
+  );
 };
 
 const createStatisticsTemplate = (filmCards, activeStatisticMenu, topGenreName, profileRating) => {

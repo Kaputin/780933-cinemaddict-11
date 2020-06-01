@@ -44,13 +44,7 @@ const createPopUpTemplate = (filmCard, comments, emoji) => {
   const commentsMarkup = comments.map((it) => createCommentMarkup(it)).join(`\n`);
   const genresMarkup = genre.map((it) => createGenreMarkup(it)).join(`\n`);
 
-  let genres = ``;
-
-  if (genre.length > 1) {
-    genres = `Genres`;
-  } else {
-    genres = `Genre`;
-  }
+  const genres = genre.length > 1 ? `Genres` : `Genre`;
 
   return (
     `<section class="film-details">
