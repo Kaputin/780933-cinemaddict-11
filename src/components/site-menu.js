@@ -1,27 +1,26 @@
 import AbstractComponent from "./abstract-component.js";
+import {MenuItem} from "../const.js";
+import {capitalize} from "../utils/common.js";
 
-const createMenuItemMarkup = (name, count) => {
-  if (name === `All`) {
+const createMenuItemMarkup = (name, count, isActive) => {
+  if (name === `all`) {
     return (
-      `<a href="#${name.toLowerCase()}.toLowerCase()" class="main-navigation__item main-navigation__item--active">${name} movies</a>`
+      `<a href="#${name}" data-filter-type="${name}" data-navigation="${MenuItem.FILMS}" class="main-navigation__item ${isActive ? `main-navigation__item--active` : ``}">${capitalize(name)} movies</a>`
     );
   } else {
     return (
-      `<a href="#${name.toLowerCase()}" class="main-navigation__item">${name} <span class="main-navigation__item-count">${count}</span></a>`
+      `<a href="#${name}"data-filter-type="${name}" data-navigation="${MenuItem.FILMS}" class="main-navigation__item ${isActive ? `main-navigation__item--active` : ``}">${capitalize(name)} <span class="main-navigation__item-count">${count}</span></a>`
     );
   }
 };
 
 const createSiteMenuTemplate = (menuItems) => {
-  const siteMenuMarkup = menuItems.map((it) => createMenuItemMarkup(it.name, it.count)).join(`\n`);
+  const siteMenuMarkup = menuItems.map((it) => createMenuItemMarkup(it.name, it.count, it.isActive)).join(`\n`);
 
   return (
-    `<nav class="main-navigation">
-      <div class="main-navigation__items">
+    `<div class="main-navigation__items">
         ${siteMenuMarkup}
-      </div>
-      <a href="#stats" class="main-navigation__additional">Stats</a>
-    </nav>`
+      </div>`
   );
 };
 
@@ -34,5 +33,14 @@ export default class SiteMenu extends AbstractComponent {
 
   getTemplate() {
     return createSiteMenuTemplate(this._menuItems);
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+      handler(evt.target.dataset.filterType);
+    });
   }
 }
